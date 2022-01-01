@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SJPT Conservation Successes Over Time</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+	<link href="css/sjpt-style.css" rel="stylesheet">
+    <style>
+
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="console">
+      <h1>San Juan Preservation Trust Conservation Successes 1979-2021</h1>
+ 
+ <!--create time slider-->
+			<div class='session' id='sliderbar'>
+				<h2>Year: <label id='active-year'></label></h2>
+				<input id='slider' class='row' type='range' min='1982' max='2021' step='1' value='1982' onmouseup="moveYearSlider('slider', 'active-year', 0);"/>
+			</div>
+			<div id='slidercontrols'>
+				<span id='slider_back' onclick="moveYearSlider('slider', 'active-year', -1);" title='Go back one year'><img src="img/skip_backward.svg"></span>
+				<span id='slider_play' onclick="startYearAnimation('slider', 'active-year', 1000, 'slider_play', 'slider_stop');" title='Animate timeline'><img src="img/play.svg"></span>
+				<span id='slider_stop' onclick="stopYearAnimation('slider_play', 'slider_stop');" title='Stop animation'><img src="img/stop.svg"></span>
+				<span id='slider_forward' onclick="moveYearSlider('slider', 'active-year', 1);" title='Go forward one year'><img src="img/skip_forward.svg"></span>
+
+				</div> <!-- id='slidercontrols' -->
+
+ 
+<div class='legend'>
+	<div class='legend-title'>Legend</div>
+		<div class='legend-scale'>
+			  <ul class='legend-labels'>
+				<li><span style='background:#267300;'></span>Protected by SJPT</li>
+				<li><span style='background:#e3e5cd;'></span>Other Public/Protected Lands</li>
+			  </ul>
+  		<div class='legend-source'>Source: <a href="http://sjpt.org/"  target="_blank">San Juan Preservation Trust</a></div>
+		<div class='map-credit'>Map design by <a href="http://www.coregis.net/"  target="_blank">CORE GIS</a></div>
+		</div>	  
+	</div>
+
+ 
+      </div>
+    </div>
+
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiY29yZS1naXMiLCJhIjoiaUxqQS1zQSJ9.mDT5nb8l_dWIHzbnOTebcQ';
+
+//set bounds to San Juan County
+var bounds = [
+		[-123.516541,48.328865], // southwest coords
+		[-122.252426,48.772935] // northeast coords
+	];
+
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/core-gis/ckxw53hlynv1e15mpdxxhw8lf',
+        center: [-122.920189,48.573200],
+        zoom: 10
+      });
+
+map.on('load', function () {
+
+	map.addSource('accomplishments',{
+		type:'vector',
+		url:'mapbox://core-gis.767wwf38'
+		});
+
+//Add a map layer for all the protected parcels
+	map.addLayer({
+		"id":"accomplishments_poly",
+		"type":"fill",
+		"source":"accomplishments",
+		"source-layer":"accomplishments_through_time-6fzid3",
+		"layout":{		},
+		"paint":{
+			'fill-color': 'rgba(38, 115, 0, 0)',
+			},
+		'filter': ['all', filteryear]
+	});
+});
+
+      map.on('load', () => {
+        let filteryear = ['==', ['number', ['get', 'year']], 12];
+        let filterDay = ['!=', ['string', ['get', 'Day']], 'placeholder'];
+
+        map.addLayer({
+          id: 'accomplishments',
+          type: 'fill',
+          source: {
+            type: 'geojson',
+            data: './collisions1601.geojson' // replace this with the url of your own geojson
+          },
+          paint: {
+            'circle-radius': [
+              'interpolate',
+              ['linear'],
+              ['number', ['get', 'Casualty']],
+              0,
+              4,
+              5,
+              24
+            ],
+            'circle-color': [
+              'interpolate',
+              ['linear'],
+              ['number', ['get', 'Casualty']],
+              0,
+              '#2DC4B2',
+              1,
+              '#3BB3C3',
+              2,
+              '#669EC4',
+              3,
+              '#8B88B6',
+              4,
+              '#A2719B',
+              5,
+              '#AA5E79'
+            ],
+            'circle-opacity': 0.8
+          },
+          'filter': ['all', filteryear, filterDay]
+        });
+
+        // update year filter when the slider is dragged
+        document.getElementById('slider').addEventListener('input', (event) => {
+          const year = parseInt(event.target.value);
+          // update the map
+          filteryear = ['==', ['number', ['get', 'Year_Prot']], year];
+          map.setFilter('collisions', ['all', filteryear, filterDay]);
+
+          // converting 0-23 year to AMPM format
+          const ampm = year >= 12 ? 'PM' : 'AM';
+          const year12 = year % 12 ? year % 12 : 12;
+
+          // update text in the UI
+          document.getElementById('active-year').innerText = year12 + ampm;
+        });
+
+        document
+          .getElementById('filters')
+          .addEventListener('change', (event) => {
+            const day = event.target.value;
+            // update the map filter
+            if (day === 'all') {
+              filterDay = ['!=', ['string', ['get', 'Day']], 'placeholder'];
+            } else if (day === 'weekday') {
+              filterDay = [
+                'match',
+                ['get', 'Day'],
+                ['Sat', 'Sun'],
+                false,
+                true
+              ];
+            } else if (day === 'weekend') {
+              filterDay = [
+                'match',
+                ['get', 'Day'],
+                ['Sat', 'Sun'],
+                true,
+                false
+              ];
+            } else {
+              console.error('error');
+            }
+            map.setFilter('collisions', ['all', filteryear, filterDay]);
+          });
+      });
+    </script>
+  </body>
+</html>

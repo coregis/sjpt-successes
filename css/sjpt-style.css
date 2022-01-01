@@ -1,0 +1,150 @@
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 20px;
+        line-height: 30px;
+		font-family: Roboto,Arial,Sans-serif;
+		color: #4c4d4d;
+      }
+
+      h2 {
+        font-size: 14px;
+        line-height: 20px;
+        margin-bottom: 10px;
+		color: #6f6f6f;
+		font-family: Roboto,Arial,Sans-serif;
+      }
+
+      a {
+        text-decoration: none;
+        color: #2dc4b2;
+      }
+
+      #console {
+        position: absolute;
+        margin: 10px;
+        width: 240px;
+        background-color: white;
+        padding: 10px 20px;
+      }
+
+.session {
+  margin-bottom: 20px;
+  margin-top:20px;
+}
+
+.row {
+  height: 12px;
+  width: 100%;
+}
+
+input#slider {
+	height: 16px;
+}
+
+div#slidercontrols {
+	text-align: center;
+}
+
+div#slidercontrols span {
+	cursor: pointer;
+}
+
+span#slider_back {
+	float: left;
+}
+
+span#slider_play, span#slider_stop {
+	margin: 0 auto;
+	width: 100%;
+}
+
+span#slider_stop {
+	display: none;
+}
+
+span#slider_forward {
+	float: right;
+}
+	  
+	  .legend{
+	background-color: #ffffff;
+	opacity:.8;
+	border: 0px;
+	width: 225px;
+	text-align: left;
+	padding: 10px;
+	font-family: "Roboto", helvetica, arial, sans-serif;	
+	font-weight: normal;
+	color: #363635;
+	text-decoration: none;
+	margin-right: 10px;
+	margin-bottom: 20px;
+	margin-top:20px;
+	overflow: hidden; /*planning ahead to clear floats*/
+}
+
+ul{
+	list-style-type:none;
+	font-size:
+}
+
+.legend-title {
+	position:relative;
+	bottom:0;
+	right:0;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 90%;
+    }
+  .legend .legend-scale ul {
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+    float: left;
+    list-style: none; 
+    }
+  .legend .legend-scale ul li {
+    font-size: 80%;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-bottom: 2px;
+    }
+  .legend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 12px;
+    width: 24px;
+    margin-right: 5px;
+    margin-left: 0;
+    border: 1px solid #999;
+    }
+  .legend .legend-source {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+	margin-top: 0px;
+    }
+	
+  .legend .map-credit {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+    }
+	
+  .legend a {
+    color: #777;
+    }
