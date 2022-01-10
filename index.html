@@ -11,8 +11,14 @@
     />
 	<link href="css/sjpt-style.css" rel="stylesheet">
     <style>
-
+			body { margin:0; padding:0; }
+			#map { position:absolute; top:0; bottom:0; width:100%; }
+			.mapboxgl-popup {
+				max-width: 400px;
+				font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+			}
     </style>
+
   </head>
 
   <body>
@@ -21,17 +27,17 @@
       <h1>San Juan Preservation Trust Conservation Successes 1979-2021</h1>
  
  <!--create time slider-->
-			<div class='session' id='sliderbar'>
-				<h2>Year: <label id='active-year'></label></h2>
-				<input id='slider' class='row' type='range' min='1982' max='2021' step='1' value='1982' onmouseup="moveYearSlider('slider', 'active-year', 0);"/>
-			</div>
-			<div id='slidercontrols'>
-				<span id='slider_back' onclick="moveYearSlider('slider', 'active-year', -1);" title='Go back one year'><img src="img/skip_backward.svg"></span>
-				<span id='slider_play' onclick="startYearAnimation('slider', 'active-year', 1000, 'slider_play', 'slider_stop');" title='Animate timeline'><img src="img/play.svg"></span>
-				<span id='slider_stop' onclick="stopYearAnimation('slider_play', 'slider_stop');" title='Stop animation'><img src="img/stop.svg"></span>
-				<span id='slider_forward' onclick="moveYearSlider('slider', 'active-year', 1);" title='Go forward one year'><img src="img/skip_forward.svg"></span>
+<div class='session' id='sliderbar'>
+	<h2>Year: <label id='active-year'></label></h2>
+	<input id='slider' class='row' type='range' min='1982' max='2021' step='1' value='1982' onmouseup="moveYearSlider('slider', 'active-year', 0);"/>
+</div>
 
-				</div> <!-- id='slidercontrols' -->
+<div id='slidercontrols'>
+	<span id='slider_back' onclick="moveYearSlider('slider', 'active-year', -1);" title='Go back one year'><img src="img/skip_backward.svg"></span>
+	<span id='slider_play' onclick="startYearAnimation('slider', 'active-year', 1000, 'slider_play', 'slider_stop');" title='Animate timeline'><img src="img/play.svg"></span>
+	<span id='slider_stop' onclick="stopYearAnimation('slider_play', 'slider_stop');" title='Stop animation'><img src="img/stop.svg"></span>
+	<span id='slider_forward' onclick="moveYearSlider('slider', 'active-year', 1);" title='Go forward one year'><img src="img/skip_forward.svg"></span>
+</div> <!-- id='slidercontrols' -->
 
  
 <div class='legend'>
@@ -81,55 +87,78 @@ map.on('load', function () {
 		"source-layer":"accomplishments_through_time-6fzid3",
 		"layout":{		},
 		"paint":{
-			'fill-color': 'rgba(38, 115, 0, 0)',
+			'fill-color': '#267300',
 			},
-		'filter': ['all', filteryear]
+//		'filter': ['all', Year_Prot]
 	});
 });
 
+// When a click event occurs on a feature in the accomplishments  layer, open a popup at the
+// location of the click, with description HTML from its properties.
+    map.on('click', 'accomplishments_poly', function (e) {
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(fillpopup(e.features[0].properties))
+            .addTo(map);
+		console.log(e.features[0].properties);
+    });
+
+	 // Change the cursor to a pointer when the mouse is over the parcel layer.
+    map.on('mouseenter', 'accomplishments_poly', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'accomplishments_poly', function () {
+        map.getCanvas().style.cursor = '';
+    });
+
+	function fillpopup(data){
+		// clear existing popups
+		document.querySelectorAll('.mapboxgl-popup').forEach(e => e.remove());
+		var html = "";
+		html = html + "<span class='varname'>Property Name: </span> <span class='attribute'>" + data.Name + "</span>";
+		html = html + "<br>"
+		html = html + "<span class='varname'>Year Protected: </span> <span class='attribute'>" + data.Year_Prot + "</span>";
+		html = html + "<br>"
+		html = html + "<span class='varname'>Protection Mechanism: </span> <span class='attribute'>" + data.Type + "</span>";
+		html = html + "<br>"		
+		html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + data.Acres_GIS + "</span>";
+		return html;
+		//this will return the string to the calling function
+	}
+
+	function clearpopups(){
+		document.querySelectorAll('.mapboxgl-popup').forEach(
+			e => e.remove()
+		);
+	}
+
+/*
       map.on('load', () => {
         let filteryear = ['==', ['number', ['get', 'year']], 12];
         let filterDay = ['!=', ['string', ['get', 'Day']], 'placeholder'];
 
+	map.addSource('accomplishments',{
+		type:'vector',
+		url:'mapbox://core-gis.767wwf38'
+		});
+		//Add a map layer for all the accomplishments data
+
         map.addLayer({
-          id: 'accomplishments',
+          id: 'accomplishments_fill',
           type: 'fill',
-          source: {
-            type: 'geojson',
-            data: './collisions1601.geojson' // replace this with the url of your own geojson
-          },
-          paint: {
-            'circle-radius': [
-              'interpolate',
-              ['linear'],
-              ['number', ['get', 'Casualty']],
-              0,
-              4,
-              5,
-              24
-            ],
-            'circle-color': [
-              'interpolate',
-              ['linear'],
-              ['number', ['get', 'Casualty']],
-              0,
-              '#2DC4B2',
-              1,
-              '#3BB3C3',
-              2,
-              '#669EC4',
-              3,
-              '#8B88B6',
-              4,
-              '#A2719B',
-              5,
-              '#AA5E79'
-            ],
-            'circle-opacity': 0.8
-          },
+          source: 'accomplishments',
+		  source-layer:'accomplishments_through_time-6fzid3',
+		  layout:{	},
+		  paint:{
+			fill-color: '
           'filter': ['all', filteryear, filterDay]
         });
+		
+*/
 
+/*
         // update year filter when the slider is dragged
         document.getElementById('slider').addEventListener('input', (event) => {
           const year = parseInt(event.target.value);
@@ -173,7 +202,9 @@ map.on('load', function () {
             }
             map.setFilter('collisions', ['all', filteryear, filterDay]);
           });
-      });
-    </script>
+*/  
+  </script>
+  
+  
   </body>
 </html>

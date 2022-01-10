@@ -148,3 +148,25 @@ ul{
   .legend a {
     color: #777;
     }
+	
+	/*This formatting is for the  name of the fields in the pop-up*/
+span.varname{
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	color: #363535;
+}
+
+/*This is formatting for the text that follows the label*/
+span.attribute {
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	color: #5b5b5b;
+	margin-top: 0;
+    margin-bottom: 0;
+}
