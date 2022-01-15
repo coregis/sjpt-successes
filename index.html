@@ -25,7 +25,7 @@
     <div id="map"></div>
     <div id="console">
       <h1>San Juan Preservation Trust Conservation Successes 1979-2021</h1>
- 
+
  <!--create time slider-->
 <div class='session' id='sliderbar'>
 	<h2>Year: <label id='active-year'></label></h2>
@@ -39,7 +39,7 @@
 	<span id='slider_forward' onclick="moveYearSlider('slider', 'active-year', 1);" title='Go forward one year'><img src="img/skip_forward.svg"></span>
 </div> <!-- id='slidercontrols' -->
 
- 
+
 <div class='legend'>
 	<div class='legend-title'>Legend</div>
 		<div class='legend-scale'>
@@ -49,10 +49,10 @@
 			  </ul>
   		<div class='legend-source'>Source: <a href="http://sjpt.org/"  target="_blank">San Juan Preservation Trust</a></div>
 		<div class='map-credit'>Map design by <a href="http://www.coregis.net/"  target="_blank">CORE GIS</a></div>
-		</div>	  
+		</div>
 	</div>
 
- 
+
       </div>
     </div>
 
@@ -90,7 +90,8 @@ map.on('load', function () {
 			'fill-color': '#267300',
 			},
 //		'filter': ['all', Year_Prot]
-	});
+	}, 'road-simple'
+	);
 });
 
 // When a click event occurs on a feature in the accomplishments  layer, open a popup at the
@@ -122,7 +123,7 @@ map.on('load', function () {
 		html = html + "<span class='varname'>Year Protected: </span> <span class='attribute'>" + data.Year_Prot + "</span>";
 		html = html + "<br>"
 		html = html + "<span class='varname'>Protection Mechanism: </span> <span class='attribute'>" + data.Type + "</span>";
-		html = html + "<br>"		
+		html = html + "<br>"
 		html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + data.Acres_GIS + "</span>";
 		return html;
 		//this will return the string to the calling function
@@ -155,7 +156,7 @@ map.on('load', function () {
 			fill-color: '
           'filter': ['all', filteryear, filterDay]
         });
-		
+
 */
 
 /*
@@ -202,9 +203,9 @@ map.on('load', function () {
             }
             map.setFilter('collisions', ['all', filteryear, filterDay]);
           });
-*/  
+*/
   </script>
-  
-  
+
+
   </body>
 </html>
