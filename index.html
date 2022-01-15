@@ -19,13 +19,16 @@
 			}
     </style>
 
+<!-- load functions & object definitions that we'll call later -->
+		<script src='scripts/functions.js'></script>
+
   </head>
 
   <body>
     <div id="map"></div>
     <div id="console">
       <h1>San Juan Preservation Trust Conservation Successes 1979-2021</h1>
- 
+
  <!--create time slider-->
 <div class='session' id='sliderbar'>
 	<h2>Year: <label id='active-year'></label></h2>
@@ -39,7 +42,7 @@
 	<span id='slider_forward' onclick="moveYearSlider('slider', 'active-year', 1);" title='Go forward one year'><img src="img/skip_forward.svg"></span>
 </div> <!-- id='slidercontrols' -->
 
- 
+
 <div class='legend'>
 	<div class='legend-title'>Legend</div>
 		<div class='legend-scale'>
@@ -49,162 +52,16 @@
 			  </ul>
   		<div class='legend-source'>Source: <a href="http://sjpt.org/"  target="_blank">San Juan Preservation Trust</a></div>
 		<div class='map-credit'>Map design by <a href="http://www.coregis.net/"  target="_blank">CORE GIS</a></div>
-		</div>	  
+		</div>
 	</div>
 
- 
+
       </div>
     </div>
 
-    <script>
-      mapboxgl.accessToken = 'pk.eyJ1IjoiY29yZS1naXMiLCJhIjoiaUxqQS1zQSJ9.mDT5nb8l_dWIHzbnOTebcQ';
+<!-- JS that needs the map element to exist before it can run -->
+		<script src='scripts/onload.js'></script>
 
-//set bounds to San Juan County
-var bounds = [
-		[-123.516541,48.328865], // southwest coords
-		[-122.252426,48.772935] // northeast coords
-	];
 
-      const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/core-gis/ckxw53hlynv1e15mpdxxhw8lf',
-        center: [-122.920189,48.573200],
-        zoom: 10
-      });
-
-map.on('load', function () {
-
-	map.addSource('accomplishments',{
-		type:'vector',
-		url:'mapbox://core-gis.767wwf38'
-		});
-
-//Add a map layer for all the protected parcels
-	map.addLayer({
-		"id":"accomplishments_poly",
-		"type":"fill",
-		"source":"accomplishments",
-		"source-layer":"accomplishments_through_time-6fzid3",
-		"layout":{		},
-		"paint":{
-			'fill-color': '#267300',
-			},
-//		'filter': ['all', Year_Prot]
-	});
-});
-
-// When a click event occurs on a feature in the accomplishments  layer, open a popup at the
-// location of the click, with description HTML from its properties.
-    map.on('click', 'accomplishments_poly', function (e) {
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(fillpopup(e.features[0].properties))
-            .addTo(map);
-		console.log(e.features[0].properties);
-    });
-
-	 // Change the cursor to a pointer when the mouse is over the parcel layer.
-    map.on('mouseenter', 'accomplishments_poly', function () {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'accomplishments_poly', function () {
-        map.getCanvas().style.cursor = '';
-    });
-
-	function fillpopup(data){
-		// clear existing popups
-		document.querySelectorAll('.mapboxgl-popup').forEach(e => e.remove());
-		var html = "";
-		html = html + "<span class='varname'>Property Name: </span> <span class='attribute'>" + data.Name + "</span>";
-		html = html + "<br>"
-		html = html + "<span class='varname'>Year Protected: </span> <span class='attribute'>" + data.Year_Prot + "</span>";
-		html = html + "<br>"
-		html = html + "<span class='varname'>Protection Mechanism: </span> <span class='attribute'>" + data.Type + "</span>";
-		html = html + "<br>"		
-		html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + data.Acres_GIS + "</span>";
-		return html;
-		//this will return the string to the calling function
-	}
-
-	function clearpopups(){
-		document.querySelectorAll('.mapboxgl-popup').forEach(
-			e => e.remove()
-		);
-	}
-
-/*
-      map.on('load', () => {
-        let filteryear = ['==', ['number', ['get', 'year']], 12];
-        let filterDay = ['!=', ['string', ['get', 'Day']], 'placeholder'];
-
-	map.addSource('accomplishments',{
-		type:'vector',
-		url:'mapbox://core-gis.767wwf38'
-		});
-		//Add a map layer for all the accomplishments data
-
-        map.addLayer({
-          id: 'accomplishments_fill',
-          type: 'fill',
-          source: 'accomplishments',
-		  source-layer:'accomplishments_through_time-6fzid3',
-		  layout:{	},
-		  paint:{
-			fill-color: '
-          'filter': ['all', filteryear, filterDay]
-        });
-		
-*/
-
-/*
-        // update year filter when the slider is dragged
-        document.getElementById('slider').addEventListener('input', (event) => {
-          const year = parseInt(event.target.value);
-          // update the map
-          filteryear = ['==', ['number', ['get', 'Year_Prot']], year];
-          map.setFilter('collisions', ['all', filteryear, filterDay]);
-
-          // converting 0-23 year to AMPM format
-          const ampm = year >= 12 ? 'PM' : 'AM';
-          const year12 = year % 12 ? year % 12 : 12;
-
-          // update text in the UI
-          document.getElementById('active-year').innerText = year12 + ampm;
-        });
-
-        document
-          .getElementById('filters')
-          .addEventListener('change', (event) => {
-            const day = event.target.value;
-            // update the map filter
-            if (day === 'all') {
-              filterDay = ['!=', ['string', ['get', 'Day']], 'placeholder'];
-            } else if (day === 'weekday') {
-              filterDay = [
-                'match',
-                ['get', 'Day'],
-                ['Sat', 'Sun'],
-                false,
-                true
-              ];
-            } else if (day === 'weekend') {
-              filterDay = [
-                'match',
-                ['get', 'Day'],
-                ['Sat', 'Sun'],
-                true,
-                false
-              ];
-            } else {
-              console.error('error');
-            }
-            map.setFilter('collisions', ['all', filteryear, filterDay]);
-          });
-*/  
-  </script>
-  
-  
   </body>
 </html>
