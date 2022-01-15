@@ -1,62 +1,17 @@
-
-
-// apply map filters persistently
-function setFilter(sourceID) {
-	if (filterStates.year) {
-		if (sourceID.includes("raising-blended-learners")) {
-			termLength = 4;
-		} else {
-			termLength = 1;
-		}
-		filters = ['all']
-		filters.push(['<=', 'year', filterStates.year.toString()]);
-		if (!filterStates.showAlumni) {
-			filters.push(['>', 'year', (filterStates.year - termLength).toString()]);
-		}
-		if (filterStates.district && filterStates.district.val) {
-			filters.push([
-				'==',
-				showSchoolDistricts ? 'school_district' : filterStates.district.field,
-				filterStates.district.val.toString()
-			]);
-		}
-		map.setFilter(sourceID, filters);
-		map.setPaintProperty(
-			sourceID,
-			'circle-stroke-opacity', 1
-		);
-		map.setPaintProperty(
-			sourceID,
-			'circle-opacity',
-			[
-				"interpolate",
-				["linear"],
-				['+', ['to-number', ['get', 'year']], (termLength - 1)],
-				2000, 0.2,
-				(filterStates.year - 1), 0.2,
-				filterStates.year, 1
-			]
-		);
-	} else {
-		console.log('something`s wrong, there should never be no year filter', filterStates);
-	}
-}
+// store the effective date of the active popup
+var popupYear = 0;
 
 // Update the year slider and corresponding map filter
 function updateYearSlider(numberID, year) {
-	filterStates.year = parseInt(year, 10);
-	for (i in loadedPointLayers) {
-		setFilter(loadedPointLayers[i][0]);
-	}
+	map.setFilter(layerToFilter, ['<=', ['get', yearField], year]);
 	// update text in the UI
 	document.getElementById(numberID).innerText = year;
-	setTimeout(function(){ updateStatsBox(); }, 100);
 }
 
 function moveYearSlider(sliderID, numberID, increment, loop=false) {
 	slider = document.getElementById(sliderID);
 	minYear = parseInt(slider.min, 10);
-	currentYear = filterStates.year ? parseInt(filterStates.year, 10) : parseInt(slider.value, 10);
+	currentYear = parseInt(slider.value, 10);
 	maxYear = parseInt(slider.max, 10);
 
 	desiredYear = currentYear + increment;
@@ -73,10 +28,9 @@ function moveYearSlider(sliderID, numberID, increment, loop=false) {
 	}
 
 	slider.value = desiredYear;
-	updateURL(district = filterStates.district ? filterStates.district.val : '0');
 	updateYearSlider(numberID, desiredYear);
 	if (desiredYear < popupYear) {
-		popup.remove();
+		clearpopups();
 	}
 }
 
@@ -126,6 +80,7 @@ function setVisibilityState(params) {
 function fillpopup(data){
 	// clear existing popups
 	clearpopups();
+	popupYear = data[yearField];
 	var html = "";
 	html = html + "<span class='varname'>Property Name: </span> <span class='attribute'>" + data.Name + "</span>";
 	html = html + "<br>"

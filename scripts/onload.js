@@ -1,5 +1,11 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29yZS1naXMiLCJhIjoiaUxqQS1zQSJ9.mDT5nb8l_dWIHzbnOTebcQ';
 
+// global variables to configure the year slider
+var sourceToFilter = "accomplishments";
+var layerToFilter = "accomplishments_poly";
+var yearField = "Year_Prot";
+
+
 //set bounds to San Juan County
 var bounds = [
 		[-123.516541,48.328865], // southwest coords
@@ -15,16 +21,16 @@ const map = new mapboxgl.Map({
 
 map.on('load', function () {
 
-	map.addSource('accomplishments',{
+	map.addSource(sourceToFilter, {
 		type:'vector',
 		url:'mapbox://core-gis.767wwf38'
 	});
 
 	//Add a map layer for all the protected parcels
 	map.addLayer({
-		"id":"accomplishments_poly",
+		"id": layerToFilter, // taking this from the global variable ensures consistency
 		"type":"fill",
-		"source":"accomplishments",
+		"source": sourceToFilter,
 		"source-layer":"accomplishments_through_time-6fzid3",
 		"paint":{
 			'fill-color': '#267300',
@@ -52,6 +58,9 @@ map.on('load', function () {
 	map.on('mouseleave', 'accomplishments_poly', function () {
 			map.getCanvas().style.cursor = '';
 	});
+
+	// start the year filter
+	moveYearSlider('slider', 'active-year', 0);
 });
 
 
