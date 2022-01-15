@@ -60,23 +60,6 @@ function stopYearAnimation(playID, stopID) {
 
 
 
-
-
-function setVisibilityState(params) {
-	if ((params.visibleOnLoad === undefined) || (params.visibleOnLoad === false)) {
-		if ((params.legendID !== undefined) && (params.legendID !== false)) {
-			document.getElementById(params.legendID).classList.add('inactive');
-		}
-		return 'none';
-	} else {
-		if ((params.legendID !== undefined) && (params.legendID !== false)) {
-			document.getElementById(params.legendID).classList.remove('inactive');
-		}
-		return 'visible';
-	}
-}
-
-
 function fillpopup(data){
 	// clear existing popups
 	clearpopups();
