@@ -35,7 +35,7 @@ map.on('load', function () {
 			'fill-color': '#267300',
 			}
 		},
-	'road-simple' // existing layer to position the new one behind
+		'road-simple' // existing layer to position the new one behind
 	);
 
 // When a click event occurs on a feature in the accomplishments  layer, open a popup at the
