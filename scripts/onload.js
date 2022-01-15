@@ -66,6 +66,18 @@ map.on('load', function () {
 
 
 
-
-
-
+function fillpopup(data){
+	// clear existing popups
+	clearpopups();
+	popupYear = data[yearField];
+	var html = "";
+	html = html + "<span class='varname'>Property Name: </span> <span class='attribute'>" + data.Name + "</span>";
+	html = html + "<br>"
+	html = html + "<span class='varname'>Year Protected: </span> <span class='attribute'>" + data.Year_Prot + "</span>";
+	html = html + "<br>"
+	html = html + "<span class='varname'>Protection Mechanism: </span> <span class='attribute'>" + data.Type + "</span>";
+	html = html + "<br>"
+	html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + data.Acres_GIS + "</span>";
+	return html;
+	//this will return the string to the calling function
+}
