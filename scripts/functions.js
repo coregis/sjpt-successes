@@ -1,13 +1,8 @@
 // store the effective date of the active popup
 var popupYear = 0;
 
-// Update the year slider and corresponding map filter
-function updateYearSlider(numberID, year) {
-	map.setFilter(layerToFilter, ['<=', ['get', yearField], year]);
-	// update text in the UI
-	document.getElementById(numberID).innerText = year;
-}
 
+// Update the year slider and corresponding map filter
 function moveYearSlider(sliderID, numberID, increment, loop=false) {
 	slider = document.getElementById(sliderID);
 	minYear = parseInt(slider.min, 10);
@@ -27,12 +22,18 @@ function moveYearSlider(sliderID, numberID, increment, loop=false) {
 		}
 	}
 
+	// apply the filter
+	map.setFilter(layerToFilter, ['<=', ['get', yearField], desiredYear]);
+
+	// update text in the UI
 	slider.value = desiredYear;
-	updateYearSlider(numberID, desiredYear);
+	document.getElementById(numberID).innerText = desiredYear;
+
 	if (desiredYear < popupYear) {
 		clearpopups();
 	}
 }
+
 
 function animateYearSlider(sliderID, numberID, delay) {
 	if (animationRunning) {
@@ -44,12 +45,14 @@ function animateYearSlider(sliderID, numberID, delay) {
 	}
 }
 
+
 function startYearAnimation(sliderID, numberID, delay, playID, stopID) {
 	animationRunning = true;
 	document.getElementById(playID).style.display = 'none';
 	document.getElementById(stopID).style.display = 'inline';
 	animateYearSlider(sliderID, numberID, delay);
 }
+
 
 function stopYearAnimation(playID, stopID) {
 	animationRunning = false;
@@ -75,6 +78,7 @@ function fillpopup(data){
 	return html;
 	//this will return the string to the calling function
 }
+
 
 function clearpopups(){
 	document.querySelectorAll('.mapboxgl-popup').forEach(

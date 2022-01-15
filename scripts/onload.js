@@ -2,8 +2,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiY29yZS1naXMiLCJhIjoiaUxqQS1zQSJ9.mDT5nb8l_dWI
 
 // global variables to configure the year slider
 var sourceToFilter = "accomplishments";
-var layerToFilter = "accomplishments_poly";
-var yearField = "Year_Prot";
+var layerToFilter = "accomplishments_poly"; // this should be the only place we ever need to edit the layer name - everything else references this variable
+var yearField = "Year_Prot"; // this tells the year slider code which field to apply the date filter to
 
 
 //set bounds to San Juan County
@@ -36,12 +36,12 @@ map.on('load', function () {
 			'fill-color': '#267300',
 			}
 		},
-	'road-simple'
+	'road-simple' // existing layer to position the new one behind
 	);
 
 // When a click event occurs on a feature in the accomplishments  layer, open a popup at the
 // location of the click, with description HTML from its properties.
-	map.on('click', 'accomplishments_poly', function (e) {
+	map.on('click', layerToFilter, function (e) {
 		new mapboxgl.Popup()
 			.setLngLat(e.lngLat)
 			.setHTML(fillpopup(e.features[0].properties))
@@ -49,17 +49,17 @@ map.on('load', function () {
 		console.log(e.features[0].properties);
 	});
 
-	// Change the cursor to a pointer when the mouse is over the parcel layer.
-	map.on('mouseenter', 'accomplishments_poly', function () {
+	// Change the cursor to a pointer when the mouse is over the data layer.
+	map.on('mouseenter', layerToFilter, function () {
 			map.getCanvas().style.cursor = 'pointer';
 	});
 
 	// Change it back to a pointer when it leaves.
-	map.on('mouseleave', 'accomplishments_poly', function () {
+	map.on('mouseleave', layerToFilter, function () {
 			map.getCanvas().style.cursor = '';
 	});
 
-	// start the year filter
+	// initialise the year slider
 	moveYearSlider('slider', 'active-year', 0);
 });
 
