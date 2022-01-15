@@ -20,7 +20,6 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', function () {
-
 	map.addSource(sourceToFilter, {
 		type:'vector',
 		url:'mapbox://core-gis.767wwf38'
@@ -61,7 +60,7 @@ map.on('load', function () {
 
 	// initialise the year slider
 	moveYearSlider('slider', 'active-year', 0);
-});
+}); // end of map.on('load'...
 
 
 
