@@ -76,7 +76,7 @@ function fillpopup(data){
 	html = html + "<br>"
 	html = html + "<span class='varname'>Protection Mechanism: </span> <span class='attribute'>" + data.Type + "</span>";
 	html = html + "<br>"
-	html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + data.Acres_GIS + "</span>";
+	html = html + "<span class='varname'>Acres: </span> <span class='attribute'>" + round(data.Acres_GIS, 1) + "</span>";
 	return html;
 	//this will return the string to the calling function
 }
