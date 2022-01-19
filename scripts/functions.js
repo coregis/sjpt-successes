@@ -68,3 +68,12 @@ function clearpopups(){
 		e => e.remove()
 	);
 }
+
+
+function round(num, dp) {
+	let multiplier = 1;
+	if (dp !== undefined) {
+		multiplier = Math.pow(10, dp);
+	}
+	return (Math.round((num + Number.EPSILON) * multiplier) / multiplier);
+}
