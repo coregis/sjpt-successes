@@ -31,8 +31,16 @@ map.on('load', function () {
 		"type":"fill",
 		"source": sourceToFilter,
 		"source-layer":"accomplishments_through_time-6fzid3",
-		"paint":{
-			'fill-color': '#267300',
+	"paint":{	
+			'fill-color':  [
+					'match',
+			['get', 'Type'],
+					'Easement', 
+					'#519A2D',
+					'Preserve',
+					'#A73B2A',
+					/* other */  '#519A2D',
+			]
 			}
 		},
 		'road-simple' // existing layer to position the new one behind
